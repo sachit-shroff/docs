@@ -92,7 +92,8 @@ button {
 
 .Button--dropdown {
   &::after {
-    background: transparent asset-url("icons/angle-down.svg") 50% 50% no-repeat;
+    background: transparent url("~/../assets/images/icons/angle-down.svg") 50%
+      50% no-repeat;
     content: "";
     height: 8px;
     width: 8px;
