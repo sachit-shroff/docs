@@ -8,7 +8,7 @@
 <title><%= [content_for(:page_title), "Buildkite Documentation"].compact.join(" | ") %></title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<%= stylesheet_link_tag "docsearch", "application", media: "all" %>
+<%= stylesheet_link_tag "docsearch", media: "all" %>
 
 <%= javascript_include_tag "docsearch", nonce: true %>
 
@@ -43,5 +43,6 @@
 
 <%= vite_client_tag %>
 <%= vite_javascript_tag 'application' %>
+<%= vite_stylesheet_tag 'application.scss' %>
 
 <%= render 'helpscout' %>
