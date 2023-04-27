@@ -42,9 +42,9 @@ COPY . /app
 RUN echo "--- :npm: Installing node dependencies"
 RUN yarn
 
-# Compile sprockets
+# Compile assets
 RUN if [ "$RAILS_ENV" = "production" ]; then \
-    echo "--- :sprockets: Precompiling assets" \
+    echo "--- Precompiling assets" \
     && RAILS_ENV=production RAILS_GROUPS=assets SECRET_KEY_BASE=xxx bundle exec rake assets:precompile \
     && cp -r /app/public/docs/assets /app/public/assets; \
     fi
