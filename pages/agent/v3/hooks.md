@@ -66,26 +66,26 @@ See the [plugin documentation](/docs/plugins) for how to implement plugin hooks 
 By default, hooks must be shell scripts. However, with the `polyglot-hooks` experiment on Agents running version v3.47.0, hooks are significantly more flexible, and can be written in the programming language of your choice.
 
 In addition to the regular shell script hooks, Polyglot Hooks enables two more types of hook to be run:
-- _Interpreted hooks_ - hooks that are run by an interpreter, such as Python, Ruby, or Node.js. These hooks are run in the same way as shell script hooks, but are executed by the appropriate interpreter instead of by the shell. These hooks **must** have a valid [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) (eg `#!/usr/bin/python3` or `#!/usr/bin/env ruby`) as the first line of the hook. Note that unfortunately, **interpreted hooks are not supported on Windows agents**
-- _Binary hooks_ are binary executables produced by compiled languages such as Go, Rust, or C++. These hooks are run in the same way as shell script hooks, but are executed directly by the operating system. These hooks must be compiled for the correct operating system and architecture, and be executable by the agent user.
+* _Interpreted hooks_ - hooks that are run by an interpreter, such as Python, Ruby, or Node.js. These hooks are run in the same way as shell script hooks, but are executed by the appropriate interpreter instead of by the shell. These hooks **must** have a valid [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) (e.g `#!/usr/bin/python3` or `#!/usr/bin/env ruby`) as the first line of the hook. Note that unfortunately, **interpreted hooks are not supported on Windows agents**
+* _Binary hooks_ are binary executables produced by compiled languages such as Go, Rust, or C++. These hooks are run in the same way as shell script hooks, but are executed directly by the operating system. These hooks must be compiled for the correct operating system and architecture, and be executable by the agent user.
 
 Polyglot hooks are run transparently by the agent, and are not distinguished from shell script hooks in the logs or in the UI. The agent will automatically detect the type of hook - whether it's a shell script, an interpreted hook, or a binary - and run it appropriately. All you need to do place your hook in the correct location, and ensure that it's executable.
 
 #### Extra environment
 
 Polyglot hooks have are called with a couple of extra environment variables set:
-- `BUILDKITE_HOOK_PHASE` - the lifecycle phase of the hook being run, eg `environment` or `post-checkout`. See [job lifecycle hooks](#job-lifecycle-hooks) for the full list of phases. This allows you to use the same hook for multiple phases, as it allows the hook to determine what phase it's being run in
-- `BUILDKITE_HOOK_PATH` - the path to the hook being run, eg `/path/to/my-hook`
-- `BUILDKITE_HOOK_SCOPE` - the scope of the hook being run, eg `global`, `local` or `plugin`
+* `BUILDKITE_HOOK_PHASE` - the lifecycle phase of the hook being run, e.g `environment` or `post-checkout`. See [job lifecycle hooks](#job-lifecycle-hooks) for the full list of phases. This allows you to use the same hook for multiple phases, as it allows the hook to determine what phase it's being run in
+* `BUILDKITE_HOOK_PATH` - the path to the hook being run, e.g `/path/to/my-hook`
+* `BUILDKITE_HOOK_SCOPE` - the scope of the hook being run, e.g `global`, `local` or `plugin`
 
 #### Caveats
 
 Polyglot hook usage comes with a couple of caveats:
-- As mentioned above, interpreted hooks are not supported on windows
-- On windows, binary hooks must have the `.exe` extension
-- In all other cases, the hook must not have a file extension
-- For interpreted hooks, the specified interpreter must already be installed on the agent machine. The agent will not install the interpreter for you
-- Unlike shell hooks, environment variable changes are not automatically captured from polyglot hooks. If you want to modify the job's environment, you'll have to use the [Job API](PUT LINK HERE YA DINGO)
+* As mentioned above, interpreted hooks are not supported on windows
+* On windows, binary hooks must have the `.exe` extension
+* In all other cases, the hook must not have a file extension
+* For interpreted hooks, the specified interpreter must already be installed on the agent machine. The agent will not install the interpreter for you
+* Unlike shell hooks, environment variable changes are not automatically captured from polyglot hooks. If you want to modify the job's environment, you'll have to use the [Job API](PUT LINK HERE YA DINGO)
 
 ## Agent lifecycle hooks
 
