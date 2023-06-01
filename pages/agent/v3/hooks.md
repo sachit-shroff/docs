@@ -26,7 +26,7 @@ There are two categories of hook:
 
 Agent lifecycle hooks are **executed** by the Buildkite agent as part of the agent's lifecycle. For example, the `pre-bootstrap` hook is executed before starting a job's bootstrap process, and the `agent-shutdown` hook is executed before the agent process terminates.
 
-Job lifecycle hooks are **sourced** (kinda sorta, see note below) by the Buildkite bootstrap in the different job phases. They are run in a per-job shell environment, and any exported environment variables are carried to the job's subsequent phases and hooks. For example, the `environment` hook can modify or export new environment variables for the job's subsequent checkout and command phases. Shell options set by individual hooks, such as set `-e -o pipefail`, are not carried over to other phases or hooks.
+Job lifecycle hooks are **sourced** (kinda sorta, see "📝 A note on sourcing for shellscripting nerds" below) by the Buildkite bootstrap in the different job phases. They are run in a per-job shell environment, and any exported environment variables are carried to the job's subsequent phases and hooks. For example, the `environment` hook can modify or export new environment variables for the job's subsequent checkout and command phases. Shell options set by individual hooks, such as set `-e -o pipefail`, are not carried over to other phases or hooks.
 
 ## Hook locations
 
@@ -142,9 +142,18 @@ Job lifecycle hooks have access to all the standard [Buildkite environment varia
 
 Job lifecycle hooks are copied to `$TMPDIR` directory and *sourced* by the agent's default shell. This has a few implications:
 
->📝 A note on sourcing for shellscripting nerds
->
-> We use the word "sourcing" in this article, but it's not strictly speaking true; the agent never actually calls the `source` command on a script. Instead, the agent uses a process called ["the scriptwrapper"](https://github.com/buildkite/agent/blob/1a5f05029cc363a984188c441f938dd316dedd16/hook/scriptwrapper.go). This process notes down the environment variables prior to a hook run, runs that hook, and then compares the environment variables after the hook run to the environment variables before the hook run. Any environment variables that were added, changed or removed are then exported to the subsequent phases and hooks. Functionally, this is very similar to how `source` works, but it's not quite the same, and it means that if you're relying on some very specific pieces of shellscripting arcana, you might find that things don't work quite as you expect.
+#### \<aside\>
+#### 📝 A note on sourcing for shellscripting nerds
+
+We use the word "sourcing" in this article, but it's not strictly speaking true; we're lying by omission a little bit. Instead, the agent uses a process called ["the scriptwrapper"](https://github.com/buildkite/agent/blob/1a5f05029cc363a984188c441f938dd316dedd16/hook/scriptwrapper.go).
+
+This process notes down the environment variables prior to a hook run, sources that hook, and then compares the environment variables after the hook run to the environment variables before the hook run.
+
+Any environment variables that were added, changed or removed are then exported to the subsequent phases and hooks. Functionally, this is very similar to how `source` would work, but it's not quite the same, and it means that if you're relying on some very specific pieces of shellscripting arcana, you might find that things don't work quite as you expect.
+
+The reason that we do this is that there's no shared bash environment between two different hooks on the same job; functionally, each hook is run in its own shell, which are orchestrated through the Agent's Go code. This means that if you set an environment variable in one hook, it wouldn't be available in the next hook without this scriptwrapper process.
+
+#### \<\/aside\>
 
 * `$BASH_SOURCE` contains the location the hook is sourced from
 * `$0` contains the location of the copy of the script that is running from `$TMPDIR`
